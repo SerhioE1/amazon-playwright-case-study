@@ -35,7 +35,7 @@ When('the user searches for {string}', async function (this: CustomWorld, produc
 
   const homePage = new HomePage(this.page);
   await homePage.openHomePage();
-  await homePage.header.searchBar.searchFor(productName);
+  await homePage.amazonHeader.searchBar.searchFor(productName);
 });
 
 /**
@@ -88,7 +88,7 @@ When('the user opens the cart', async function (this: CustomWorld) {
   const homePage = new HomePage(this.page);
 
   await homePage.openHomePage();
-  await homePage.header.openCart();
+  await homePage.amazonHeader.openCart();
 });
 
 /**

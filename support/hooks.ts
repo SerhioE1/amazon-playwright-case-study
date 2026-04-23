@@ -90,7 +90,7 @@ After(async function (this: CustomWorld, scenario) {
       const homePage = new HomePage(this.page);
 
       await homePage.openHomePage();
-      await homePage.header.openCart();
+      await homePage.amazonHeader.openCart();
 
       const cartPage = new CartPage(this.page);
       await cartPage.clearCart();
