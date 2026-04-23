@@ -44,9 +44,9 @@ jobs:
       HEADED: false
       STORAGE_STATE_PATH: storageState.json
 
-      # Uncomment if CI should use authenticated session
-      # AMAZON_EMAIL: ${{ secrets.AMAZON_EMAIL }}
-      # AMAZON_PASSWORD: ${{ secrets.AMAZON_PASSWORD }}
+
+      AMAZON_EMAIL: ${{ secrets.AMAZON_EMAIL }}
+      AMAZON_PASSWORD: ${{ secrets.AMAZON_PASSWORD }}
 
     steps:
       - name: Checkout repository
