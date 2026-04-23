@@ -20,7 +20,8 @@ npm -v
 ⚙️ Setup
 Clone the repository
 ```bash
-git clone https://github.com/SerhioE1/amazon-playwright-case-study.git
+git clone <your-repo-url>
+cd <project-folder>
 ```
 Install dependencies
 ```bash
