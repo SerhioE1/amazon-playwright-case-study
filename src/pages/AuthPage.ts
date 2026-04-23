@@ -2,8 +2,8 @@ import { Locator, Page } from 'playwright';
 import { BasePage } from './BasePage';
 
 export class AuthPage extends BasePage {
+  private static readonly AUTH_TIMEOUT = 15000;
 
-  private static readonly AUTH_TIMEOUT = 2000;
   private readonly signInNavButton: Locator;
   private readonly emailInput: Locator;
   private readonly continueButton: Locator;
@@ -15,8 +15,8 @@ export class AuthPage extends BasePage {
     super(page);
 
     this.signInNavButton = page.locator(
-      '#nav-link-accountList a[data-nav-role="signin"], #nav-link-accountList a'
-    ).first(); //TODO: make more stable
+      '#nav-link-accountList a[data-nav-role="signin"], #nav-link-accountList a, a[href*="/ap/signin"]'
+    ).first();
 
     this.emailInput = page.locator('#ap_email_login, #ap_email').first();
 
@@ -31,11 +31,37 @@ export class AuthPage extends BasePage {
   }
 
   async openSignIn(): Promise<void> {
+    await this.page.waitForLoadState('domcontentloaded');
+
+    console.log('Current URL before sign-in:', this.page.url());
+
+    const title = await this.page.title().catch(() => '');
+    console.log('Page title before sign-in:', title);
+
+    const signInCount = await this.page
+      .locator('#nav-link-accountList a[data-nav-role="signin"], #nav-link-accountList a, a[href*="/ap/signin"]')
+      .count()
+      .catch(() => 0);
+
+    console.log('Sign-in locator matches found:', signInCount);
+
+    const bodyText = await this.page.locator('body').textContent().catch(() => '');
+    console.log('Body preview before sign-in:', (bodyText || '').replace(/\s+/g, ' ').slice(0, 800));
+
+    await this.page.screenshot({
+      path: 'test-results/before-signin-debug.png',
+      fullPage: true
+    });
+
+    const html = await this.page.content().catch(() => '');
+    console.log('HTML preview before sign-in:', html.slice(0, 1500));
+
     await this.signInNavButton.waitFor({
       state: 'visible',
       timeout: AuthPage.AUTH_TIMEOUT
     });
 
+    await this.signInNavButton.scrollIntoViewIfNeeded().catch(() => {});
     await this.signInNavButton.click();
 
     await this.emailInput.waitFor({
@@ -81,7 +107,6 @@ export class AuthPage extends BasePage {
 
   async isLoggedIn(): Promise<boolean> {
     const greeting = await this.getGreetingText();
-
     return /hello/i.test(greeting) && !/sign in/i.test(greeting);
   }
 
