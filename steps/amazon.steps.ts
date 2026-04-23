@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import { Given, Then, When } from '@cucumber/cucumber';
+import { DataTable } from '@cucumber/cucumber';
 import { CustomWorld } from '../support/custom-world';
 import { HomePage } from '../src/pages/HomePage';
 import { SearchResultsPage } from '../src/pages/SearchResultsPage';
@@ -15,49 +16,47 @@ import { CartPage } from '../src/pages/CartPage';
  */
 
 Given('the test framework is initialized', async function (this: CustomWorld) {
-  const homePage = new HomePage(this.page);
-  await homePage.openHomePage();
-});
-
-When('the user searches for {string}', async function (this: CustomWorld, productName: string) {
-  this.currentSearchTerm = productName;
+  this.selectedProducts = [];
 
   const homePage = new HomePage(this.page);
   await homePage.openHomePage();
-  await homePage.amazonHeader.searchBar.searchFor(productName);
 });
 
 When(
-  'the user opens the cheapest available product from the search results',
-  async function (this: CustomWorld) {
-    const searchResultsPage = new SearchResultsPage(this.page);
+  'the user adds the cheapest products to the cart:',
+  async function (this: CustomWorld, dataTable: DataTable) {
+    const productNames = dataTable.raw().flat().filter(Boolean);
 
-    await searchResultsPage.waitForResults();
-    await searchResultsPage.applyBrandFilter(this.currentSearchTerm);
-    await searchResultsPage.sortByPriceLowToHigh();
+    for (const productName of productNames) {
+      this.currentSearchTerm = productName;
 
-    const parsedProducts = await searchResultsPage.getFirstValidProducts(10);
-    console.log(`Parsed first valid products for ${this.currentSearchTerm}:`, parsedProducts);
+      const homePage = new HomePage(this.page);
+      await homePage.openHomePage();
+      await homePage.amazonHeader.searchBar.searchFor(productName);
 
-    const cheapestProduct = ProductSelectionService.getCheapestProduct(parsedProducts);
-    console.log(`Selected cheapest product for ${this.currentSearchTerm}:`, cheapestProduct);
+      const searchResultsPage = new SearchResultsPage(this.page);
 
-    this.selectedProducts.push(cheapestProduct);
+      await searchResultsPage.waitForResults();
+      await searchResultsPage.applyBrandFilter(productName);
+      await searchResultsPage.sortByPriceLowToHigh();
 
-    await searchResultsPage.openProduct(cheapestProduct);
+      const parsedProducts = await searchResultsPage.getFirstValidProducts(10);
+      console.log(`Parsed first valid products for ${productName}:`, parsedProducts);
+
+      const cheapestProduct = ProductSelectionService.getCheapestProduct(parsedProducts);
+      console.log(`Selected cheapest product for ${productName}:`, cheapestProduct);
+
+      this.selectedProducts.push(cheapestProduct);
+
+      await searchResultsPage.openProduct(cheapestProduct);
+
+      const productPage = new ProductPage(this.page);
+      await productPage.addToCart();
+
+      console.log('Add to cart action was performed for product:', cheapestProduct);
+    }
   }
 );
-
-When('the user adds the product to the cart', async function (this: CustomWorld) {
-  const productPage = new ProductPage(this.page);
-
-  await productPage.addToCart();
-
-  console.log(
-    'Add to cart action was performed for product:',
-    this.selectedProducts[this.selectedProducts.length - 1]
-  );
-});
 
 When('the user opens the cart', async function (this: CustomWorld) {
   const homePage = new HomePage(this.page);

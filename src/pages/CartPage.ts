@@ -14,7 +14,6 @@ export class CartPage extends BasePage {
   private readonly freshCartLink: Locator;
   private readonly regularDeleteButtons: Locator;
   private readonly freshDeleteButtons: Locator;
-  private static readonly CART_TIMEOUT = 10000;
 
   constructor(page: Page) {
     super(page);

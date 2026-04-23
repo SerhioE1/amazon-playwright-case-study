@@ -3,7 +3,7 @@ import { BasePage } from './BasePage';
 
 export class AuthPage extends BasePage {
 
-  private static readonly AUTH_TIMEOUT = 15000;
+  private static readonly AUTH_TIMEOUT = 2000;
   private readonly signInNavButton: Locator;
   private readonly emailInput: Locator;
   private readonly continueButton: Locator;

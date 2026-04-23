@@ -12,7 +12,7 @@ export class ProductPage extends BasePage {
   private readonly addToCartButton: Locator;
   private readonly addToCartButtonFallback: Locator;
   private readonly seeAllBuyingOptionsButton: Locator;
-  private static readonly PRODUCT_TIMEOUT = 10000;
+  private static readonly PRODUCT_TIMEOUT = 2000;
 
   constructor(page: Page) {
     super(page);

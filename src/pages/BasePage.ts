@@ -2,7 +2,7 @@ import { Locator, Page } from 'playwright';
 
 export class BasePage {
   protected readonly page: Page;
-  protected static readonly DEFAULT_TIMEOUT = 10000;
+  protected static readonly DEFAULT_TIMEOUT = 2000;
 
   constructor(page: Page) {
     this.page = page;

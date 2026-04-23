@@ -8,7 +8,7 @@ export class CookieBanner {
   private readonly page: Page;
   private readonly acceptButton: Locator;
 
-  private static readonly BANNER_TIMEOUT = 15000;
+  private static readonly BANNER_TIMEOUT = 2000;
 
   constructor(page: Page) {
     this.page = page;

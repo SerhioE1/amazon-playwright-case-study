@@ -11,8 +11,8 @@ import { BasePage } from './BasePage';
  */
 export class BuyingOptionsPage extends BasePage {
 
-  private static readonly BUYING_OPTIONS_TIMEOUT = 15000;
-  private static readonly TIMEOUT = 5000;
+  private static readonly BUYING_OPTIONS_TIMEOUT = 2000;
+  private static readonly TIMEOUT = 2000;
   private readonly buyingOptionsContainer: Locator;
   private readonly addToCartButtons: Locator;
   private readonly fallbackAddToCartButtons: Locator;

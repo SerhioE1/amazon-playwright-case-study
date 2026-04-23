@@ -13,8 +13,8 @@ export class SearchResultsPage extends BasePage {
   private readonly sortSelect: Locator;
   private readonly sortDropdownTrigger: Locator;
   private readonly priceLowToHighOption: Locator;
-  private static readonly RESULTS_TIMEOUT = 20000;
-  private static readonly DROPDOWN_TIMEOUT = 10000;
+  private static readonly RESULTS_TIMEOUT = 2000;
+  private static readonly DROPDOWN_TIMEOUT = 2000;
 
   constructor(page: Page) {
     super(page);
