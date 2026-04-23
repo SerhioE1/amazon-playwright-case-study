@@ -1,5 +1,5 @@
 Amazon Playwright Case Study
-Automation project built with Playwright + TypeScript + Cucumber (BDD).
+Automation project built with Playwright + TypeScript + Cucumber (BDD).  
 This project demonstrates a real-world UI automation approach for Amazon.  
 The main goal is not only to automate clicks, but to validate meaningful business behavior:
 searching for products
@@ -36,7 +36,7 @@ Summary
 Author
 ---
 Project Goal
-The purpose of this project is to provide a clear, scalable, and maintainable automation solution for a case study based on Amazon.
+The purpose of this project is to provide a clear, scalable, and maintainable automation solution for a case study based on Amazon.  
 The project is intentionally structured to show:
 readable automation code
 proper separation of concerns
@@ -78,7 +78,7 @@ Node.js – runtime
 dotenv – environment variable management
 ---
 Why This Architecture
-This project is structured to keep responsibilities separated.
+This project is structured to keep responsibilities separated.  
 Instead of writing one large test with all logic inside step definitions, the project is split into clear layers:
 Pages handle page-specific UI actions
 Components handle reusable UI fragments
@@ -418,23 +418,23 @@ AMAZON_PASSWORD=
 STORAGE_STATE_PATH=storageState.json
 ```
 Variables explained
-`BASE_URL`
-base URL of tested application
+`BASE_URL`  
+base URL of tested application  
 default: `https://www.amazon.com`
-`HEADED`
-if `true`, browser opens visibly
+`HEADED`  
+if `true`, browser opens visibly  
 if `false`, tests run headless
-`AMAZON_EMAIL`
+`AMAZON_EMAIL`  
 optional login email for session reuse
-`AMAZON_PASSWORD`
+`AMAZON_PASSWORD`  
 optional login password for session reuse
-`STORAGE_STATE_PATH`
+`STORAGE_STATE_PATH`  
 path to saved Playwright storage state file
 Important:  
 Authentication is optional for the main scenario.
 ---
 Installation
-1. Install dependencies
+Install dependencies
 ```bash
 npm install
 
@@ -448,35 +448,30 @@ for example(
     npm install -D rimraf cross-env
 )
 ```
-2. Install Playwright browsers
+Install Playwright browsers
 ```bash
 npx playwright install
 ```
 This command downloads browser binaries required by Playwright.
 ---
-## CI Pipeline
-
+CI Pipeline
 The project can be executed in CI using GitHub Actions.
-
 Recommended pipeline steps:
-- checkout repository
-- install Node.js
-- install npm dependencies
-- install Playwright browsers
-- run type check
-- run lint
-- run BDD tests
-- upload reports and artifacts
-
+checkout repository
+install Node.js
+install npm dependencies
+install Playwright browsers
+run type check
+run lint
+run BDD tests
+upload reports and artifacts
 Example workflow file:
-
 `.github/workflows/ci.yml`
-
 The CI pipeline is designed to:
-- validate code quality
-- validate TypeScript correctness
-- execute automated scenarios
-- preserve reports and artifacts for debugging
+validate code quality
+validate TypeScript correctness
+execute automated scenarios
+preserve reports and artifacts for debugging
 ---
 Running Tests
 Run BDD tests (headless)
