@@ -8,12 +8,13 @@ on:
     branches:
       - main
   schedule:
-    - cron: '0 2 */3 * *'  # runs every 3 days at 02:00 UTC
+    - cron: '0 2 */3 * *'
 
 jobs:
   quality:
     name: Setup
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
@@ -22,7 +23,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 20
           cache: npm
 
       - name: Install dependencies
@@ -38,13 +39,12 @@ jobs:
     name: BDD Tests
     runs-on: ubuntu-latest
     needs: quality
+    timeout-minutes: 20
 
     env:
       BASE_URL: https://www.amazon.com
       HEADED: false
       STORAGE_STATE_PATH: storageState.json
-
-
       AMAZON_EMAIL: ${{ secrets.AMAZON_EMAIL }}
       AMAZON_PASSWORD: ${{ secrets.AMAZON_PASSWORD }}
 
@@ -55,7 +55,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 20
           cache: npm
 
       - name: Install dependencies
@@ -63,6 +63,12 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+
+      - name: Print environment info
+        run: |
+          node -v
+          npm -v
+          npx playwright --version
 
       - name: Run BDD tests
         run: npm run test:bdd
@@ -82,6 +88,7 @@ jobs:
           name: playwright-artifacts
           path: |
             test-results/
+            reports/
             playwright-report/
             storageState.json
           if-no-files-found: ignore
