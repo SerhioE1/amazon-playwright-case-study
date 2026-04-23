@@ -1,8 +1,4 @@
 import dotenv from 'dotenv';
-// Legacy safeguard: dotenv is loaded here to ensure environment variables
-// are available even if service is invoked outside the main test bootstrap.
-// In a cleaner final setup, env loading should ideally be centralized.
-// dotenv.config();
 dotenv.config();
 
 import fs from 'node:fs';
@@ -13,31 +9,13 @@ import { AuthPage } from '../pages/AuthPage';
 
 /**
  * AuthSessionService
- *
- * Service responsible for:
- * - checking whether a stored Playwright session exists
- * - creating browser contexts with saved storage state
- * - validating whether the stored session is still authenticated
- * - performing login and persisting a fresh storage state when required
- *
- * This is a service/orchestration layer.
- * It intentionally does not contain UI locator logic directly.
  */
 export class AuthSessionService {
-  /**
-   * Returns whether the configured storage state file exists.
-   */
+
   static storageStateExists(): boolean {
     return fs.existsSync(env.storageStatePath);
   }
 
-  /**
-   * Creates a browser context using stored session state if available.
-   *
-   * Note:
-   * Method name is intentionally kept, but semantically it creates
-   * a session-aware context, not just a plain context.
-   */
   static async createContext(browser: Browser): Promise<BrowserContext> {
     if (this.storageStateExists()) {
       return browser.newContext({ storageState: env.storageStatePath });
@@ -46,16 +24,6 @@ export class AuthSessionService {
     return browser.newContext();
   }
 
-  /**
-   * Ensures that a valid logged-in session exists.
-   *
-   * Flow:
-   * 1. Create context (with stored session if available)
-   * 2. Open home page
-   * 3. Check if already logged in
-   * 4. If not logged in, perform UI login
-   * 5. Save fresh storage state
-   */
   static async ensureLoggedIn(browser: Browser): Promise<void> {
     const context = await this.createContext(browser);
     const page = await context.newPage();

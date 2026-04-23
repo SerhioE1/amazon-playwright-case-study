@@ -5,84 +5,36 @@ import { PriceParser } from '../services/PriceParser';
 
 /**
  * SearchResultsPage
- *
  * Represents the Amazon search results page.
- * This page object is responsible for:
- * - waiting for search results to appear
- * - applying brand filters
- * - sorting results by price
- * - parsing product cards from the result grid
- * - opening a selected product page
- *
- * Important:
- * This class parses candidate products, but does not decide which one is the
- * final cheapest product to use. That selection logic belongs outside this class.
  */
 export class SearchResultsPage extends BasePage {
-  /**
-   * Search result cards rendered by Amazon.
-   */
+
   private readonly resultCards: Locator;
-
-  /**
-   * Legacy Snickers-specific locator kept only as a reminder of earlier implementation.
-   * No longer used because brand filtering is now generic.
-   */
-  // private readonly snickersBrandFilter: Locator;
-
-  /**
-   * Native sort select used by Amazon search results.
-   * This is the preferred sort interaction strategy.
-   */
   private readonly sortSelect: Locator;
-
-  /**
-   * Fallback sort dropdown trigger used only when native select is not usable.
-   */
   private readonly sortDropdownTrigger: Locator;
-
-  /**
-   * Fallback option for "Price: Low to High" sorting when dropdown flow is needed.
-   */
   private readonly priceLowToHighOption: Locator;
-
-  /**
-   * Local timeout for search result page waits.
-   */
-  private static readonly RESULTS_TIMEOUT = 20000;
+  private static readonly RESULTS_TIMEOUT = 2000;
+  private static readonly DROPDOWN_TIMEOUT = 2000;
 
   constructor(page: Page) {
     super(page);
 
-    // Main Amazon search result cards.
     this.resultCards = page.locator('[data-component-type="s-search-result"]');
-
-    // Legacy Snickers-only filter locator kept for reference.
-    // this.snickersBrandFilter = page.locator(
-    //   '#brandsRefinements a[aria-label*="Apply Snickers filter"], #brandsRefinements a:has-text("Snickers")'
-    // );
-
-    // Preferred native sort select.
     this.sortSelect = page.locator('#s-result-sort-select');
 
-    // Fallback dropdown trigger for sorting.
     this.sortDropdownTrigger = page.locator(
       'span.a-dropdown-prompt:has-text("Featured"), ' +
         'span.a-dropdown-prompt:has-text("Price"), ' +
         '#s-result-sort-select'
-    );
+    );//TODO: Change locator to more stable
 
-    // Fallback low-to-high option locator.
     this.priceLowToHighOption = page.locator(
       '#s-result-sort-select_1, ' +
         'a[data-value*="price-asc-rank"], ' +
         'li.a-dropdown-item a:has-text("Price: Low to High")'
-    );
+    );//TODO: Change locator to more stable
   }
 
-  /**
-   * Waits until at least the first search result card becomes visible.
-   */
   async waitForResults(): Promise<void> {
     await this.resultCards.first().waitFor({
       state: 'visible',
@@ -90,13 +42,6 @@ export class SearchResultsPage extends BasePage {
     });
   }
 
-  /**
-   * Applies a brand filter if such a filter is available in the left refinement panel.
-   *
-   * Note:
-   * The "brand" argument should match the actual text displayed in Amazon's brand filter,
-   * not just any search term variant.
-   */
   async applyBrandFilter(brand: string): Promise<void> {
     await this.waitForResults();
 
@@ -116,8 +61,6 @@ export class SearchResultsPage extends BasePage {
 
     await this.page.waitForLoadState('domcontentloaded');
 
-    // Temporary fallback wait.
-    // Should ideally be replaced by a stronger DOM-refresh synchronization strategy.
     await this.page.waitForTimeout(2500);
 
     await this.page
@@ -127,15 +70,6 @@ export class SearchResultsPage extends BasePage {
     await this.waitForResults();
   }
 
-  /**
-   * Sorts results by "Price: Low to High".
-   *
-   * Preferred strategy:
-   * - use native select when available
-   *
-   * Fallback strategy:
-   * - use dropdown trigger + explicit option click
-   */
   async sortByPriceLowToHigh(): Promise<void> {
     await this.waitForResults();
 
@@ -151,10 +85,9 @@ export class SearchResultsPage extends BasePage {
       return;
     }
 
-    // Fallback strategy: dropdown click flow.
     await this.sortDropdownTrigger.first().waitFor({
       state: 'visible',
-      timeout: 15000
+      timeout: SearchResultsPage.DROPDOWN_TIMEOUT
     });
 
     await this.sortDropdownTrigger.first().scrollIntoViewIfNeeded().catch(() => {});
@@ -162,7 +95,7 @@ export class SearchResultsPage extends BasePage {
 
     await this.priceLowToHighOption.first().waitFor({
       state: 'visible',
-      timeout: 15000
+      timeout: SearchResultsPage.DROPDOWN_TIMEOUT
     });
 
     await this.priceLowToHighOption.first().click();
@@ -175,13 +108,6 @@ export class SearchResultsPage extends BasePage {
     await this.waitForResults();
   }
 
-  /**
-   * Parses up to the first N result cards and returns only valid product entries.
-   *
-   * Important:
-   * This method parses the first "limit" cards from the current results list,
-   * then filters out invalid cards (missing title, URL or visible price).
-   */
   async getFirstValidProducts(limit = 10): Promise<Product[]> {
     await this.waitForResults();
 
@@ -235,11 +161,6 @@ export class SearchResultsPage extends BasePage {
       products.push({
         // Current product title as rendered in the search result card.
         name: raw.name,
-
-        // Note:
-        // searchTerm here is currently reused as a placeholder field,
-        // but semantically this is not the original search query.
-        // This can be improved later by separating "search input" and "parsed result title".
         searchTerm: raw.name,
 
         price,
