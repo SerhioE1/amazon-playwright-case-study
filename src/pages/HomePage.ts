@@ -9,7 +9,6 @@ import { env } from '../utils/env';
  * Represents the Amazon home page.
  */
 export class HomePage extends BasePage {
-
   readonly amazonHeader: AmazonHeader;
   private readonly cookieBanner: CookieBanner;
 
@@ -23,6 +22,6 @@ export class HomePage extends BasePage {
   async openHomePage(): Promise<void> {
     await this.open(env.baseUrl);
     await this.cookieBanner.acceptIfPresent();
-    await this.amazonHeader.searchBar.waitUntilReady();
+    await this.waitForPageLoad();
   }
 }
