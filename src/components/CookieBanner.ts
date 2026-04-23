@@ -48,7 +48,7 @@ export class CookieBanner {
       await this.acceptButton.first().click();
 
       console.log('Cookie banner accepted');
-    } catch (e) {
+    } catch {
       // If not found or not visible within timeout → ignore
       console.log('Cookie banner not present');
     }
