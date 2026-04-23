@@ -22,11 +22,7 @@ export class HomePage extends BasePage {
 
   async openHomePage(): Promise<void> {
     await this.open(env.baseUrl);
-
-    // Accept cookie banner if shown.
     await this.cookieBanner.acceptIfPresent();
-
-    // Wait until the page is actually ready for search interaction.
     await this.amazonHeader.searchBar.waitUntilReady();
   }
 }

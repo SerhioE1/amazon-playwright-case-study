@@ -95,7 +95,7 @@ export class SearchResultsPage extends BasePage {
 
     await this.priceLowToHighOption.first().waitFor({
       state: 'visible',
-      timeout: 15000
+      timeout: SearchResultsPage.DROPDOWN_TIMEOUT
     });
 
     await this.priceLowToHighOption.first().click();

@@ -4,13 +4,6 @@ import { Product } from '../models/Product';
  * ProductSelectionService
  *
  * Responsible for selecting products based on business rules.
- * Currently supports:
- * - selecting the cheapest valid product from a parsed list
- *
- * A valid product must have:
- * - numeric price
- * - product URL
- * - name
  */
 export class ProductSelectionService {
   static getCheapestProduct(products: Product[]): Product {

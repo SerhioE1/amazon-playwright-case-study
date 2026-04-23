@@ -1,15 +1,9 @@
 import dotenv from 'dotenv';
-
-// Load environment variables once at config level
 dotenv.config();
 
 /**
  * env
- *
  * Centralized configuration object for environment variables.
- * Provides:
- * - defaults for non-critical values
- * - strict validation for required values
  */
 export const env = {
   /**

@@ -1,7 +1,4 @@
 import dotenv from 'dotenv';
-// Legacy safeguard: dotenv is loaded here to ensure hooks can still run
-// even if they are executed outside the intended bootstrap path.
-// In a cleaner final setup, env loading should ideally be centralized.
 dotenv.config();
 
 import { After, Before, BeforeAll, setDefaultTimeout, Status } from '@cucumber/cucumber';
@@ -22,17 +19,11 @@ setDefaultTimeout(DEFAULT_CUCUMBER_TIMEOUT);
 
 /**
  * Temporary debug logs kept from env/bootstrap troubleshooting.
- * These should be removed or replaced with structured logging in final cleanup.
  */
 // console.log('AMAZON_EMAIL loaded:', !!process.env.AMAZON_EMAIL);
 // console.log('AMAZON_PASSWORD loaded:', !!process.env.AMAZON_PASSWORD);
 // console.log('STORAGE_STATE_PATH:', process.env.STORAGE_STATE_PATH);
 
-/**
- * Before all scenarios:
- * validate whether stored authenticated session still works.
- * If not, perform login and save fresh storage state.
- */
 BeforeAll(async function () {
   const browser = await chromium.launch({
     headless: !env.headed
